@@ -1,29 +1,16 @@
 package com.careerit.cj.cbook;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ContactServiceImpl implements ContactService{
-
-    private List<Contact> contacts = new ArrayList<>();
-
+public class ContactServiceDbImpl implements ContactService{
     @Override
     public Contact addContact(Contact contact) {
-        contact.setId(IdGenerator.generateId());
-        contacts.add(contact);
-        return contact;
+        return null;
     }
 
     @Override
     public Contact getContact(String id) {
-        Contact contact = null;
-        for(Contact ele: contacts){
-            if(ele.getId().equalsIgnoreCase(id)){
-                contact = ele;
-                break;
-            }
-        }
-        return contact;
+        return null;
     }
 
     @Override
@@ -48,7 +35,6 @@ public class ContactServiceImpl implements ContactService{
 
     @Override
     public String sendBirthdayGreetings() {
-
         return "";
     }
 }

@@ -124,8 +124,13 @@ public class ContactManager {
     }
 
     private static void sendBirthdayGreetings() {
+
         String result = service.sendBirthdayGreetings();
-        System.out.println(result);
+        if(result.isEmpty()){
+            System.out.println("No birthdays today!");
+        }else {
+            System.out.println(result);
+        }
     }
 
     private static int readInt(String prompt) {
