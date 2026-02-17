@@ -17,4 +17,5 @@ public class Employee {
     private LocalDate hiredate;
     private double sal;
     private Double comm;
+    private Integer deptno;
 }
