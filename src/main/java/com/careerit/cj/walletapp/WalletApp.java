@@ -33,51 +33,61 @@ public class WalletApp {
                     System.out.printf("Wallet created for %s with userId: %d%n", w.getUserName(), w.getUserId());
                 }
                 case 2 -> {
-                    System.out.print("Enter userId: ");
-                    int userId = sc.nextInt();
-                    System.out.print("Enter amount to load: ");
-                    double amount = sc.nextDouble();
-                    Wallet w = walletService.loadAmount(userId, amount);
-                    if (w != null) {
+                    try {
+                        System.out.print("Enter userId: ");
+                        int userId = sc.nextInt();
+                        System.out.print("Enter amount to load: ");
+                        double amount = sc.nextDouble();
+                        Wallet w = walletService.loadAmount(userId, amount);
                         System.out.printf("%.2f credited to %s's wallet. New balance: %.2f%n", amount, w.getUserName(), w.getBalance());
+                    } catch (WalletNotFoundException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                 }
                 case 3 -> {
-                    System.out.print("Enter userId: ");
-                    int userId = sc.nextInt();
-                    System.out.print("Enter amount to withdraw: ");
-                    double amount = sc.nextDouble();
-                    Wallet w = walletService.withdraw(userId, amount);
-                    if (w != null) {
+                    try {
+                        System.out.print("Enter userId: ");
+                        int userId = sc.nextInt();
+                        System.out.print("Enter amount to withdraw: ");
+                        double amount = sc.nextDouble();
+                        Wallet w = walletService.withdraw(userId, amount);
                         System.out.printf("%.2f debited from %s's wallet. New balance: %.2f%n", amount, w.getUserName(), w.getBalance());
+                    } catch (WalletNotFoundException | InsufficientFundException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                 }
                 case 4 -> {
-                    System.out.print("Enter sender userId: ");
-                    int fromUserId = sc.nextInt();
-                    System.out.print("Enter receiver userId: ");
-                    int toUserId = sc.nextInt();
-                    System.out.print("Enter amount to transfer: ");
-                    double amount = sc.nextDouble();
-                    Wallet w = walletService.transfer(fromUserId, toUserId, amount);
-                    if (w != null) {
+                    try {
+                        System.out.print("Enter sender userId: ");
+                        int fromUserId = sc.nextInt();
+                        System.out.print("Enter receiver userId: ");
+                        int toUserId = sc.nextInt();
+                        System.out.print("Enter amount to transfer: ");
+                        double amount = sc.nextDouble();
+                        Wallet w = walletService.transfer(fromUserId, toUserId, amount);
                         System.out.printf("%.2f transferred from %s. New balance: %.2f%n", amount, w.getUserName(), w.getBalance());
+                    } catch (WalletNotFoundException | UserNotFoundException | InsufficientFundException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                 }
                 case 5 -> {
-                    System.out.print("Enter userId: ");
-                    int userId = sc.nextInt();
-                    WalletStatement statement = walletService.getWalletStatement(userId);
-                    if (statement == null || statement.getTransactions().isEmpty()) {
-                        System.out.println("No transactions found.");
-                    } else {
-                        System.out.printf("User: %s, Balance: %.2f%n", statement.getWallet().getUserName(), statement.getWallet().getBalance());
-                        System.out.printf("%-5s %-10s %-10s %-12s%n", "TxnId", "WalletId", "Amount", "Type");
-                        System.out.println("-".repeat(40));
-                        for (WalletTransaction txn : statement.getTransactions()) {
-                            System.out.printf("%-5d %-10d %-10.2f %-12s%n",
-                                    txn.getId(), txn.getWalletId(), txn.getAmount(), txn.getTransactionType());
+                    try {
+                        System.out.print("Enter userId: ");
+                        int userId = sc.nextInt();
+                        WalletStatement statement = walletService.getWalletStatement(userId);
+                        if (statement.getTransactions().isEmpty()) {
+                            System.out.println("No transactions found.");
+                        } else {
+                            System.out.printf("User: %s, Balance: %.2f%n", statement.getWallet().getUserName(), statement.getWallet().getBalance());
+                            System.out.printf("%-5s %-10s %-10s %-12s%n", "TxnId", "WalletId", "Amount", "Type");
+                            System.out.println("-".repeat(40));
+                            for (WalletTransaction txn : statement.getTransactions()) {
+                                System.out.printf("%-5d %-10d %-10.2f %-12s%n",
+                                        txn.getId(), txn.getWalletId(), txn.getAmount(), txn.getTransactionType());
+                            }
                         }
+                    } catch (WalletNotFoundException e) {
+                        System.out.println("Error: " + e.getMessage());
                     }
                 }
                 case 6 -> {

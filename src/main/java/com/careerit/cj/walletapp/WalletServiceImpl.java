@@ -24,8 +24,7 @@ public class WalletServiceImpl implements WalletService {
     public Wallet loadAmount(int userId, double amount) {
         Wallet wallet = walletMap.get(userId);
         if (wallet == null) {
-            System.out.println("Wallet not found for userId: " + userId);
-            return null;
+            throw new WalletNotFoundException("Wallet not found for userId: " + userId);
         }
         wallet.setBalance(wallet.getBalance() + amount);
         transactions.add(new WalletTransaction(txnIdSeq++, wallet.getId(), amount, TransactionType.CREDITED));
@@ -36,12 +35,10 @@ public class WalletServiceImpl implements WalletService {
     public Wallet withdraw(int userId, double amount) {
         Wallet wallet = walletMap.get(userId);
         if (wallet == null) {
-            System.out.println("Wallet not found for userId: " + userId);
-            return null;
+           throw new WalletNotFoundException("Wallet not found for userId: " + userId);
         }
         if (wallet.getBalance() < amount) {
-            System.out.printf("Insufficient balance. Available: %.2f, Requested: %.2f%n", wallet.getBalance(), amount);
-            return null;
+            throw new InsufficientFundException(String.format("Insufficient balance. Available: %.2f, Requested: %.2f", wallet.getBalance(), amount));
         }
         wallet.setBalance(wallet.getBalance() - amount);
         transactions.add(new WalletTransaction(txnIdSeq++, wallet.getId(), amount, TransactionType.DEBITED));
@@ -53,16 +50,13 @@ public class WalletServiceImpl implements WalletService {
         Wallet fromWallet = walletMap.get(fromUserId);
         Wallet toWallet = walletMap.get(toUserId);
         if (fromWallet == null) {
-            System.out.println("Sender wallet not found for userId: " + fromUserId);
-            return null;
+            throw new WalletNotFoundException("Sender wallet not found for userId: " + fromUserId);
         }
         if (toWallet == null) {
-            System.out.println("Receiver wallet not found for userId: " + toUserId);
-            return null;
+            throw new WalletNotFoundException("Receiver wallet not found for userId: " + toUserId);
         }
         if (fromWallet.getBalance() < amount) {
-            System.out.printf("Insufficient balance. Available: %.2f, Requested: %.2f%n", fromWallet.getBalance(), amount);
-            return null;
+            throw new InsufficientFundException(String.format("Insufficient balance. Available: %.2f, Requested: %.2f", fromWallet.getBalance(), amount));
         }
         fromWallet.setBalance(fromWallet.getBalance() - amount);
         toWallet.setBalance(toWallet.getBalance() + amount);
@@ -75,8 +69,7 @@ public class WalletServiceImpl implements WalletService {
     public WalletStatement getWalletStatement(int userId) {
         Wallet wallet = walletMap.get(userId);
         if (wallet == null) {
-            System.out.println("Wallet not found for userId: " + userId);
-            return null;
+            throw new WalletNotFoundException("Wallet not found for userId: " + userId);
         }
         List<WalletTransaction> txns = transactions.stream()
                 .filter(txn -> txn.getWalletId() == wallet.getId())
