@@ -1,0 +1,1 @@
+create table wallet_items(id uuid primary key, wallet_id uuid references wallet(id),txn_type varchar(250),amount float);

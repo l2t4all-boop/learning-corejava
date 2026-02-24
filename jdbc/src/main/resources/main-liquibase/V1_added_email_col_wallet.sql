@@ -1,0 +1,1 @@
+alter table wallet add column if not exists email varchar(250) default null;
