@@ -1,4 +1,4 @@
-package com.careerit.jdbc;
+package com.careerit.jdbc.wallet;
 
 import java.util.UUID;
 
@@ -8,7 +8,7 @@ public class Wallet {
     private String username;
     private String mobile;
     private double balance;
-
+    private String email;
     public UUID getId() {
         return id;
     }
@@ -41,6 +41,14 @@ public class Wallet {
         this.balance = balance;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "Wallet{" +
@@ -48,6 +56,7 @@ public class Wallet {
                 ", username='" + username + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", balance=" + balance +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

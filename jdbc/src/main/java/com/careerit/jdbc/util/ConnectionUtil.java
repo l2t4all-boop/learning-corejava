@@ -1,4 +1,4 @@
-package com.careerit.jdbc;
+package com.careerit.jdbc.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

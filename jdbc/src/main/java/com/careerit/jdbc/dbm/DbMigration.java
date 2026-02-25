@@ -1,5 +1,6 @@
-package com.careerit.jdbc;
+package com.careerit.jdbc.dbm;
 
+import com.careerit.jdbc.util.ConnectionUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import liquibase.Liquibase;
@@ -16,8 +17,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DbMigration {
-    private static final String CHANGELOG = "main-liquibase/main-liquibase.xml";
+    private static final String CHANGELOG = "main-migration/main-liquibase.xml";
+    private static final String MASTER_CHANGELOG= "master-migration/master-liquibase.xml";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    static{
+        System.out.println("DB Migration has started");
+        DbMigration dbMigration = new DbMigration();
+        dbMigration.runMigration();
+        dbMigration.runTenantMigration();
+        System.out.println("DB Migration has completed");
+    }
 
     public void runMigration() {
         Connection con = null;
@@ -26,7 +36,7 @@ public class DbMigration {
             con = ConnectionUtil.getConnection();
             Database database = DatabaseFactory.getInstance()
                     .findCorrectDatabaseImplementation(new JdbcConnection(con));
-            liquibase = new Liquibase(CHANGELOG, new ClassLoaderResourceAccessor(), database);
+            liquibase = new Liquibase(MASTER_CHANGELOG, new ClassLoaderResourceAccessor(), database);
             liquibase.update();
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,13 +46,20 @@ public class DbMigration {
     }
 
     public void runTenantMigration() {
+        int scount = 0;
+        int fcount = 0;
         Map<String, String> map = getTenantConnectionDetails();
-        map.forEach((ele, conStr) -> {
+
+        for(Map.Entry<String,String> entry:map.entrySet()) {
+            String tenantId = entry.getKey();
+            String conStr = entry.getValue();
             Connection con = null;
             Liquibase liquibase = null;
             try {
+                System.out.println("Migration started for tenant :" + tenantId);
                 Map<String, String> conDetails = OBJECT_MAPPER
-                        .readValue(conStr, new TypeReference<Map<String, String>>() {});
+                        .readValue(conStr, new TypeReference<Map<String, String>>() {
+                        });
                 String url = conDetails.get("url");
                 String username = conDetails.get("username");
                 String password = conDetails.get("password");
@@ -52,12 +69,16 @@ public class DbMigration {
                         .findCorrectDatabaseImplementation(new JdbcConnection(con));
                 liquibase = new Liquibase(CHANGELOG, new ClassLoaderResourceAccessor(), database);
                 liquibase.update();
+                scount++;
             } catch (Exception e) {
+                fcount++;
                 e.printStackTrace();
             } finally {
                 ConnectionUtil.close(liquibase, con);
             }
-        });
+        }
+        System.out.println("Total " + scount + " databases are migrated");
+        System.out.println("Total " + fcount + " databases migration failed");
     }
 
     public Map<String, String> getTenantConnectionDetails() {

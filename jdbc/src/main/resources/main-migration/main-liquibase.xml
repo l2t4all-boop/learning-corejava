@@ -8,14 +8,14 @@
     http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd ">
 
     <changeSet id="1001" author="L2T">
-        <sqlFile path="main-liquibase/V1_wallet_ddl.sql" splitStatements="true" endDelimiter=";"/>
+        <sqlFile path="main-migration/V1_wallet_ddl.sql" splitStatements="true" endDelimiter=";"/>
     </changeSet>
     <changeSet id="1002" author="L2T">
-        <sqlFile path="main-liquibase/V1_added_email_col_wallet.sql" splitStatements="true" endDelimiter=";"/>
+        <sqlFile path="main-migration/V1_added_email_col_wallet.sql" splitStatements="true" endDelimiter=";"/>
     </changeSet>
 
     <changeSet id="1003" author="L2T">
-        <sqlFile path="main-liquibase/V1_wallet_items_ddl.sql" splitStatements="true" endDelimiter=";"/>
+        <sqlFile path="main-migration/V1_wallet_items_ddl.sql" splitStatements="true" endDelimiter=";"/>
     </changeSet>
 
 

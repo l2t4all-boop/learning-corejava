@@ -1,0 +1,1 @@
+create table audit_log(id int);
